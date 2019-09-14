@@ -69,7 +69,6 @@ const traductor = cadena => {
     else if(pre in nums) {
       num();
     }
-    else return ;
   }
   expr();
   if(formated.length !== 0 ) {
