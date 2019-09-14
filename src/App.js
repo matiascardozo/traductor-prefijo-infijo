@@ -1,108 +1,198 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
   const [entrada, setEntrada] = useState("");
-  const [out, setOut ] = useState("")
-  let salida = ""
-const traductor = cadena => {
-  let formated = Array.from(cadena); // conversion de cadena en array de caracteres
-  let pre= formated[0]; // Inicialización de lectura
-  const nums = ['0','1','2','3','4','5','6','7','8','9']
+  const [traduccion, setTraduccion] = useState("");
+  const [error, setError] = useState("");
+  let salida = "";
 
-  const match = char => {
-      if(pre === char) {
+  const traductor = cadena => {
+    let formated = Array.from(cadena); // conversion de cadena en array de caracteres
+    let pre = formated[0]; // Inicialización de lectura
+    const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+    const match = char => {
+      console.log(char, pre);
+      if (pre === char) {
         formated.shift();
-        if(formated[0]){
-            pre=formated[0]
+        if (formated[0]) {
+          pre = formated[0];
         } else {
-            pre='';
-           return;
+          pre = "";
+          return;
         }
+      } else {
+        setError(`Error al hacer match.`);
+        throw Error();
       }
-      else 
-        throw Error(`El caractér ${char} no forma parte del alfabeto`)
-  }
+    };
 
-  const digito = () => {
-    switch(pre)
-    {      
-      case '0': console.log('0'); salida += "0"; match('0'); break;
-      case '1': console.log('1');  salida += "1"; match('1'); break; 
-      case '2': console.log('2');  salida += "2"; match('2'); break; 
-      case '3': console.log('3');  salida += "3"; match('3'); break; 
-      case '4': console.log('4');  salida += "4";match('4'); break; 
-      case '5': console.log('5'); salida += "5"; match('5'); break; 
-      case '6': console.log('6');  salida += "6";match('6'); break; 
-      case '7': console.log('7'); salida += "7"; match('7'); break; 
-      case '8': console.log('8');  salida += "8";match('8'); break; 
-      case '9': console.log('9');  salida += "9";match('9'); break; 
-      default: salida = `El caractér ${pre} no forma parte del alfabeto`; throw Error(`El caractér ${pre} no forma parte del alfabeto`)
-    }
-  }
+    const digito = () => {
+      switch (pre) {
+        case "0":
+          console.log("0");
+          salida += "0";
+          match("0");
+          break;
+        case "1":
+          console.log("1");
+          salida += "1";
+          match("1");
+          break;
+        case "2":
+          console.log("2");
+          salida += "2";
+          match("2");
+          break;
+        case "3":
+          console.log("3");
+          salida += "3";
+          match("3");
+          break;
+        case "4":
+          console.log("4");
+          salida += "4";
+          match("4");
+          break;
+        case "5":
+          console.log("5");
+          salida += "5";
+          match("5");
+          break;
+        case "6":
+          console.log("6");
+          salida += "6";
+          match("6");
+          break;
+        case "7":
+          console.log("7");
+          salida += "7";
+          match("7");
+          break;
+        case "8":
+          console.log("8");
+          salida += "8";
+          match("8");
+          break;
+        case "9":
+          console.log("9");
+          salida += "9";
+          match("9");
+          break;
+        default:
+          setError(`El caractér ${pre} no forma parte del alfabeto`);
+        // throw Error(`El caractér ${pre} no forma parte del alfabeto`);
+      }
+    };
 
-  const num = () => {
-    if(pre in nums) {
-      digito(); num();
-    } else return;
-  }
+    const expr = () => {
+      if (pre === "+") {
+        match("+");
+        expr();
+        match(" ");
+        salida += "+";
+        expr();
+        return;
+      } else if (pre === "-") {
+        match("-");
+        expr();
+        match(" ");
+        salida += "-";
+        expr();
+        return;
+      } else if (pre === "*") {
+        match("*");
+        salida += "(";
+        expr();
+        match(" ");
+        salida += "*";
+        expr();
+        salida += ")";
+        return;
+      } else if (pre === "/") {
+        match("/");
+        salida += "(";
+        expr();
+        match(" ");
+        salida += "/";
+        expr();
+        salida += ")";
+        return;
+      } else if (pre in nums) {
+        digito();
+        expr();
+        return;
+      } else return;
+    };
+    expr();
+    if (formated.length !== 0) {
+      setError("Se termino en un estado no final");
+      // throw Error("Se termino en un estado no final");
+    } else {
+      console.log("Termino exitoso");
+      return;
+    }
+  };
 
-  const expr = () => {
-    if(pre === '+') {
-      match('+'); expr(); match(" "); console.log('+') ; salida += "+"; expr();
-      return;
-    }
-    else if(pre === '-') {
-      match('-'); expr(); match(" "); console.log('-');  salida += "-" ;expr();
-      return;
-    }
-    else if(pre === '*') {
-      match('*'); console.log('('); salida += "("; expr(); match(" "); console.log('*'); salida += "*"; expr(); console.log(')'); salida += ")";
-      return;
-    }
-     else if(pre === '/') {
-      match('/'); console.log('('); salida += "("; expr(); match(" "); console.log('/'); salida += "/"; expr(); console.log(')'); salida += ")";
-      return;
-    }
-    else if(pre in nums) {
-      num();
-    }
-  }
-  expr();
-  if(formated.length !== 0 ) {
-    console.log("se termino en un st")
-    throw Error('Se termino en un estado no final')
-  }
-  else {
-      console.log('Termino exitoso');
-      return;
-  } 
-}
   const convertir = () => {
-    salida = ""
+    salida = "";
     try {
-      traductor(entrada)
-      console.log("continuó")
-      setOut(salida)
-    }catch(e){
+      traductor(entrada);
+      setTraduccion(salida);
+    } catch (e) {
       console.log(e.message);
-      setOut(e.message)
-    } 
-  }
-  return (
-    <div className="App">
-      <header className="App-header">
-      <div className="form-group">
-        <label>Entrada prefija:</label>
-        <input className="form-control"  type="text" value={entrada} onChange={(event) => setEntrada(event.target.value) } /> 
-        <button className="btn btn-outline-primary" onClick={convertir} >Convertir</button>
-      </div>
+      setTraduccion(e.message);
+    }
+  };
 
-      Salida infija: <p>{out}</p>
-       
-      </header>
+  return (
+    <div
+      className="App row  text-center align-middle overflow-hidden"
+      style={{ height: "100vh" }}
+    >
+      <div
+        class="card text-center w-50 align-middle overflow-hidden"
+        style={{ margin: "auto" }}
+      >
+        <div class="card-header">
+          <span style={{ color: "#2f0743" }} class="font-weight-bold">
+            Traductor de expresiones prefijas a infijas
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="col align-middle h-100">
+            <div class="row mb-4">
+              <label for="entrada">Expresión prefija</label>
+              <input
+                type="text"
+                class="form-control"
+                id="entrada"
+                value={entrada}
+                onChange={event => setEntrada(event.target.value)}
+              />
+            </div>
+            <div class="row my-4">
+              <button className="btn btn-dark w-100" onClick={convertir}>
+                Traducir
+              </button>
+            </div>
+            <div class="row my-4">
+              <label for="salida">Expresión infija</label>
+
+              <input
+                type="text"
+                class="form-control"
+                id="salida"
+                readOnly
+                value={!error ? traduccion : ""}
+              />
+            </div>
+          </div>
+        </div>
+        {error && <div class="card-footer bg-danger text-white">{error}</div>}
+      </div>
     </div>
   );
 }
