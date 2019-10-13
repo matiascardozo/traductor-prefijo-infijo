@@ -29,6 +29,12 @@ function App() {
       }
     };
 
+    const num = () => {
+      if(pre in nums) {
+        digito(); num();
+      } else return;
+    }
+
     const digito = () => {
       switch (pre) {
         case "0":
@@ -90,17 +96,21 @@ function App() {
     const expr = () => {
       if (pre === "+") {
         match("+");
+        salida += "(";
         expr();
         match(" ");
         salida += "+";
         expr();
+        salida += ")";
         return;
       } else if (pre === "-") {
         match("-");
+        salida += "(";
         expr();
         match(" ");
         salida += "-";
         expr();
+        salida += ")";
         return;
       } else if (pre === "*") {
         match("*");
@@ -121,8 +131,7 @@ function App() {
         salida += ")";
         return;
       } else if (pre in nums) {
-        digito();
-        expr();
+        num();
         return;
       } else return;
     };
@@ -137,6 +146,7 @@ function App() {
   };
 
   const convertir = () => {
+    setError("")
     salida = "";
     try {
       traductor(entrada);
