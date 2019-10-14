@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-let vals = [];
+let vals = []; // Array de valores ya encontrados
 
 function App() {
   const [entrada, setEntrada] = useState("");
@@ -14,14 +14,23 @@ function App() {
 
   let salida = "";
 
+  /**
+   * Realiza la traducción de una cadena pasada como parámetro
+   * @param {String} cadena
+   */
   const traductor = cadena => {
     let formated = Array.from(cadena); // conversion de cadena en array de caracteres
     let pre = formated[0]; // Inicialización de lectura
 
     const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Enumeración de los números válidos
 
+    /**
+     * Función que guarda en la tabla de simbolos el valor value con su correspondiente token.
+     * Utiliza una variable global vals donde se van guardando los valores ya encontrados.
+     * @param {String} value
+     * @param {String} token
+     */
     const addToSymbolTable = (value, token) => {
-      console.log(value, !vals.includes(value));
       if (!vals.includes(value)) {
         vals.push(value);
         setSymbol(prev => ({
@@ -61,11 +70,14 @@ function App() {
       if (pre in nums) {
         const dig = digito();
         const n = num();
-        // addToSymbolTable(`${dig}${n}`, "num");
+        // se retorna el valor para poder guardarlo en la tabla de simbolos.
         return `${dig}${n || ""}`;
       } else return;
     };
 
+    /**
+     * Función del no terminal digito. Cada vez que se matchea un digito se lo agrega a la tabla de simbolos.
+     */
     const digito = () => {
       switch (pre) {
         case "0":
@@ -121,10 +133,13 @@ function App() {
           return 9;
         default:
           setError(`El caractér ${pre} no forma parte del alfabeto`);
-        // throw Error(`El caractér ${pre} no forma parte del alfabeto`);
       }
     };
 
+    /**
+     * Función que corresponde al no terminal de expr. Cada vez que se encuentra un operando se agrega a la
+     * tabla de símbolos
+     */
     const expr = () => {
       if (pre === "+") {
         match("+");
@@ -169,6 +184,7 @@ function App() {
       } else if (pre in nums) {
         const d = digito();
         const n = num();
+        // Es para el caso de la definición regular num -> digito+
         addToSymbolTable(`${d}${n || ""}`, "num");
         return;
       } else {
@@ -178,13 +194,15 @@ function App() {
     expr();
     if (formated.length !== 0) {
       setError("Se termino en un estado no final");
-      // throw Error("Se termino en un estado no final");
     } else {
       console.log("Termino exitoso");
       return;
     }
   };
 
+  /**
+   * Función que ejecuta la traducción
+   */
   const convertir = () => {
     setError("");
     salida = "";
@@ -221,6 +239,7 @@ function App() {
                 id="entrada"
                 value={entrada}
                 onFocus={() => {
+                  // Inicializamos los valores a su default antes de realizar la traducción.
                   vals = [];
                   setSymbol({ valores: [], tokens: [] });
                 }}
