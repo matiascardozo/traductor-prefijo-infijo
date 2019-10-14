@@ -15,13 +15,22 @@ function App() {
     let pre = formated[0]; // Inicialización de lectura
     const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Enumeración de los números válidos
 
+    const addToSymbolTable = (value, token) => {
+      if (!(value in valores)) {
+        setValores(prev => [...prev, value]);
+        setTokens(prev => [...prev, token]);
+      } else {
+        setValores(valores);
+        setTokens(tokens);
+      }
+    };
+
     /**
      * Realiza la comparación entre el caracter a matchear char y el que se encuentra en la primera
      * posición de pre.
      * @param {char} char
      */
     const match = char => {
-      console.log(char, pre);
       if (pre === char) {
         formated.shift(); // leemos un nuevo caracter
         // verificación de que exista todavía caracteres
@@ -44,63 +53,65 @@ function App() {
      */
     const num = () => {
       if (pre in nums) {
-        digito();
-        num();
+        const dig = digito();
+        const n = num();
+        addToSymbolTable(`${dig}${n}`, "num");
       } else return;
     };
 
     const digito = () => {
       switch (pre) {
         case "0":
-          console.log("0");
           salida += "0";
           match("0");
-          break;
+          addToSymbolTable("0", "digito");
+          return 0;
         case "1":
-          console.log("1");
           salida += "1";
           match("1");
+          addToSymbolTable("1", "digito");
+          return 1;
           break;
         case "2":
-          console.log("2");
           salida += "2";
           match("2");
-          break;
+          addToSymbolTable("2", "digito");
+          return 2;
         case "3":
-          console.log("3");
           salida += "3";
           match("3");
-          break;
+          addToSymbolTable("3", "digito");
+          return 3;
         case "4":
-          console.log("4");
           salida += "4";
           match("4");
-          break;
+          addToSymbolTable("4", "digito");
+          return 4;
         case "5":
-          console.log("5");
           salida += "5";
           match("5");
-          break;
+          addToSymbolTable("5", "digito");
+          return 5;
         case "6":
-          console.log("6");
           salida += "6";
           match("6");
-          break;
+          addToSymbolTable("6", "digito");
+          return 6;
         case "7":
-          console.log("7");
           salida += "7";
           match("7");
-          break;
+          addToSymbolTable("7", "digito");
+          return 7;
         case "8":
-          console.log("8");
           salida += "8";
           match("8");
-          break;
+          addToSymbolTable("8", "digito");
+          return 8;
         case "9":
-          console.log("9");
           salida += "9";
           match("9");
-          break;
+          addToSymbolTable("9", "digito");
+          return 9;
         default:
           setError(`El caractér ${pre} no forma parte del alfabeto`);
         // throw Error(`El caractér ${pre} no forma parte del alfabeto`);
@@ -110,8 +121,7 @@ function App() {
     const expr = () => {
       if (pre === "+") {
         match("+");
-        setValores(prev => [...prev, "+"]);
-        setTokens(prev => [...prev, "suma"]);
+        addToSymbolTable("+", "suma");
         salida += "(";
         expr();
         match(" ");
@@ -121,8 +131,7 @@ function App() {
         return;
       } else if (pre === "-") {
         match("-");
-        setValores(prev => [...prev, "-"]);
-        setTokens(prev => [...prev, "resta"]);
+        addToSymbolTable("-", "resta");
         salida += "(";
         expr();
         match(" ");
@@ -132,8 +141,7 @@ function App() {
         return;
       } else if (pre === "*") {
         match("*");
-        setValores(prev => [...prev, "*"]);
-        setTokens(prev => [...prev, "mult"]);
+        addToSymbolTable("*", "mult");
         salida += "(";
         expr();
         match(" ");
@@ -143,8 +151,7 @@ function App() {
         return;
       } else if (pre === "/") {
         match("/");
-        setValores(prev => [...prev, "/"]);
-        setTokens(prev => [...prev, "div"]);
+        addToSymbolTable("/", "div");
         salida += "(";
         expr();
         match(" ");
@@ -157,8 +164,8 @@ function App() {
         num();
         return;
       } else {
-        setError("Error. Faltan operadores u operandos")
-      };
+        setError("Error. Faltan operadores u operandos");
+      }
     };
     expr();
     if (formated.length !== 0) {
@@ -181,7 +188,7 @@ function App() {
       setTraduccion(e.message);
     }
   };
-  console.log(valores, tokens);
+
   return (
     <div
       className="App row  text-center align-middle overflow-hidden"
@@ -252,7 +259,7 @@ function App() {
                 {valores.map((s, index) => (
                   <tr>
                     <td key={`valores${index}`}>{s}</td>
-                    <td key={`valores${index}`}>{tokens[index]}</td>
+                    <td key={`token${index}`}>{tokens[index]}</td>
                   </tr>
                 ))}
               </tbody>
