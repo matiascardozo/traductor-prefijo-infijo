@@ -1,27 +1,33 @@
-import React, { useState } from "react";
-import logo from "./logo.svg";
+import React, { useState, useEffect } from "react";
 import "./App.css";
+
+let vals = [];
 
 function App() {
   const [entrada, setEntrada] = useState("");
   const [traduccion, setTraduccion] = useState("");
   const [error, setError] = useState("");
-  const [valores, setValores] = useState([]);
-  const [tokens, setTokens] = useState([]);
+  const [symbol, setSymbol] = useState({
+    valores: [],
+    tokens: []
+  });
+
   let salida = "";
 
   const traductor = cadena => {
     let formated = Array.from(cadena); // conversion de cadena en array de caracteres
     let pre = formated[0]; // Inicialización de lectura
+
     const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Enumeración de los números válidos
 
     const addToSymbolTable = (value, token) => {
-      if (!(value in valores)) {
-        setValores(prev => [...prev, value]);
-        setTokens(prev => [...prev, token]);
-      } else {
-        setValores(valores);
-        setTokens(tokens);
+      console.log(value, !vals.includes(value));
+      if (!vals.includes(value)) {
+        vals.push(value);
+        setSymbol(prev => ({
+          valores: [...prev.valores, value],
+          tokens: [...prev.tokens, token]
+        }));
       }
     };
 
@@ -181,8 +187,6 @@ function App() {
 
   const convertir = () => {
     setError("");
-    setValores([]);
-    setTokens([]);
     salida = "";
     try {
       traductor(entrada);
@@ -200,7 +204,7 @@ function App() {
     >
       <div
         className="card text-center w-50 align-middle overflow-hidden"
-        style={{ margin: "auto" }}
+        style={{ margin: "auto", position: "sticky" }}
       >
         <div className="card-header">
           <span style={{ color: "#2f0743" }} className="font-weight-bold">
@@ -208,7 +212,7 @@ function App() {
           </span>
         </div>
         <div className="card-body">
-          <div className="col align-middle h-100">
+          <div className="col align-middle h-100 ">
             <div className="row mb-4">
               <label htmlFor="entrada">Expresión prefija</label>
               <input
@@ -216,11 +220,20 @@ function App() {
                 className="form-control"
                 id="entrada"
                 value={entrada}
+                onFocus={() => {
+                  vals = [];
+                  setSymbol({ valores: [], tokens: [] });
+                }}
                 onChange={event => setEntrada(event.target.value)}
               />
             </div>
             <div className="row my-4">
-              <button className="btn btn-dark w-100" onClick={convertir}>
+              <button
+                className="btn btn-dark w-100"
+                onClick={() => {
+                  convertir();
+                }}
+              >
                 Traducir
               </button>
             </div>
@@ -260,12 +273,13 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {valores.map((s, index) => (
-                  <tr>
-                    <td key={`valores${index}`}>{s}</td>
-                    <td key={`token${index}`}>{tokens[index]}</td>
-                  </tr>
-                ))}
+                {symbol &&
+                  symbol.valores.map((s, index) => (
+                    <tr>
+                      <td key={`valores${index}`}>{s}</td>
+                      <td key={`token${index}`}>{symbol.tokens[index]}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
