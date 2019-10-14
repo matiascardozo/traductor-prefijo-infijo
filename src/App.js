@@ -26,20 +26,27 @@ function App() {
         if (formated[0]) {
           pre = formated[0];
         } else {
-          // si no existe devolvemos el caracter vacio como
+          // si no existe devolvemos el caracter vacio como ""
           pre = "";
           return;
         }
       } else {
-        // setError es una función de useState de React que sirve para mostrar el nombre del error.
+        // setError es una función de useState de React que sirve para mostrar el nombre del error en la interfaz.
         setError(`Error al hacer match.`);
         throw Error();
       }
     };
 
     /**
-     * Función del no terminal dígito
+     * Función del no terminal num.
      */
+    const num = () => {
+      if (pre in nums) {
+        digito();
+        num();
+      } else return;
+    };
+
     const digito = () => {
       switch (pre) {
         case "0":
@@ -101,17 +108,21 @@ function App() {
     const expr = () => {
       if (pre === "+") {
         match("+");
+        salida += "(";
         expr();
         match(" ");
         salida += "+";
         expr();
+        salida += ")";
         return;
       } else if (pre === "-") {
         match("-");
+        salida += "(";
         expr();
         match(" ");
         salida += "-";
         expr();
+        salida += ")";
         return;
       } else if (pre === "*") {
         match("*");
@@ -132,8 +143,7 @@ function App() {
         salida += ")";
         return;
       } else if (pre in nums) {
-        digito();
-        expr();
+        num();
         return;
       } else return;
     };
@@ -148,6 +158,7 @@ function App() {
   };
 
   const convertir = () => {
+    setError("");
     salida = "";
     try {
       traductor(entrada);
