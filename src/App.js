@@ -55,7 +55,8 @@ function App() {
       if (pre in nums) {
         const dig = digito();
         const n = num();
-        addToSymbolTable(`${dig}${n}`, "num");
+        // addToSymbolTable(`${dig}${n}`, "num");
+        return `${dig}${n || ""}`;
       } else return;
     };
 
@@ -160,8 +161,9 @@ function App() {
         salida += ")";
         return;
       } else if (pre in nums) {
-        digito();
-        num();
+        const d = digito();
+        const n = num();
+        addToSymbolTable(`${d}${n || ""}`, "num");
         return;
       } else {
         setError("Error. Faltan operadores u operandos");
@@ -179,6 +181,8 @@ function App() {
 
   const convertir = () => {
     setError("");
+    setValores([]);
+    setTokens([]);
     salida = "";
     try {
       traductor(entrada);
@@ -191,7 +195,7 @@ function App() {
 
   return (
     <div
-      className="App row  text-center align-middle overflow-hidden"
+      className="App row  text-center align-middle overflow-auto"
       style={{ height: "100vh" }}
     >
       <div
@@ -248,7 +252,7 @@ function App() {
         </div>
         <div className="card-body">
           <div className="col align-middle h-100">
-            <table className="table">
+            <table className="table-sm">
               <thead>
                 <tr>
                   <th scope="col">Valor</th>
