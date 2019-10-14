@@ -6,6 +6,8 @@ function App() {
   const [entrada, setEntrada] = useState("");
   const [traduccion, setTraduccion] = useState("");
   const [error, setError] = useState("");
+  const [valores, setValores] = useState([]);
+  const [tokens, setTokens] = useState([]);
   let salida = "";
 
   const traductor = cadena => {
@@ -108,6 +110,8 @@ function App() {
     const expr = () => {
       if (pre === "+") {
         match("+");
+        setValores(prev => [...prev, "+"]);
+        setTokens(prev => [...prev, "suma"]);
         salida += "(";
         expr();
         match(" ");
@@ -117,6 +121,8 @@ function App() {
         return;
       } else if (pre === "-") {
         match("-");
+        setValores(prev => [...prev, "-"]);
+        setTokens(prev => [...prev, "resta"]);
         salida += "(";
         expr();
         match(" ");
@@ -126,6 +132,8 @@ function App() {
         return;
       } else if (pre === "*") {
         match("*");
+        setValores(prev => [...prev, "*"]);
+        setTokens(prev => [...prev, "mult"]);
         salida += "(";
         expr();
         match(" ");
@@ -135,6 +143,8 @@ function App() {
         return;
       } else if (pre === "/") {
         match("/");
+        setValores(prev => [...prev, "/"]);
+        setTokens(prev => [...prev, "div"]);
         salida += "(";
         expr();
         match(" ");
@@ -168,44 +178,44 @@ function App() {
       setTraduccion(e.message);
     }
   };
-
+  console.log(valores, tokens);
   return (
     <div
       className="App row  text-center align-middle overflow-hidden"
       style={{ height: "100vh" }}
     >
       <div
-        class="card text-center w-50 align-middle overflow-hidden"
+        className="card text-center w-50 align-middle overflow-hidden"
         style={{ margin: "auto" }}
       >
-        <div class="card-header">
-          <span style={{ color: "#2f0743" }} class="font-weight-bold">
+        <div className="card-header">
+          <span style={{ color: "#2f0743" }} className="font-weight-bold">
             Traductor de expresiones prefijas a infijas
           </span>
         </div>
-        <div class="card-body">
-          <div class="col align-middle h-100">
-            <div class="row mb-4">
-              <label for="entrada">Expresión prefija</label>
+        <div className="card-body">
+          <div className="col align-middle h-100">
+            <div className="row mb-4">
+              <label htmlFor="entrada">Expresión prefija</label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="entrada"
                 value={entrada}
                 onChange={event => setEntrada(event.target.value)}
               />
             </div>
-            <div class="row my-4">
+            <div className="row my-4">
               <button className="btn btn-dark w-100" onClick={convertir}>
                 Traducir
               </button>
             </div>
-            <div class="row my-4">
-              <label for="salida">Expresión infija</label>
+            <div className="row my-4">
+              <label htmlFor="salida">Expresión infija</label>
 
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="salida"
                 readOnly
                 value={!error ? traduccion : ""}
@@ -213,7 +223,42 @@ function App() {
             </div>
           </div>
         </div>
-        {error && <div class="card-footer bg-danger text-white">{error}</div>}
+        {error && (
+          <div className="card-footer bg-danger text-white">{error}</div>
+        )}
+      </div>
+      <div
+        className="card text-center w-25 align-middle overflow-hidden"
+        style={{ margin: "auto" }}
+      >
+        <div className="card-header">
+          <span style={{ color: "#2f0743" }} className="font-weight-bold">
+            Tabla de Símbolos
+          </span>
+        </div>
+        <div className="card-body">
+          <div className="col align-middle h-100">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Valor</th>
+                  <th scope="col">Token</th>
+                </tr>
+              </thead>
+              <tbody>
+                {valores.map((s, index) => (
+                  <tr>
+                    <td key={`valores${index}`}>{s}</td>
+                    <td key={`valores${index}`}>{tokens[index]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {error && (
+          <div className="card-footer bg-danger text-white">{error}</div>
+        )}
       </div>
     </div>
   );
