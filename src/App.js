@@ -11,24 +11,35 @@ function App() {
   const traductor = cadena => {
     let formated = Array.from(cadena); // conversion de cadena en array de caracteres
     let pre = formated[0]; // Inicialización de lectura
-    const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; // Enumeración de los números válidos
 
+    /**
+     * Realiza la comparación entre el caracter a matchear char y el que se encuentra en la primera
+     * posición de pre.
+     * @param {char} char
+     */
     const match = char => {
       console.log(char, pre);
       if (pre === char) {
-        formated.shift();
+        formated.shift(); // leemos un nuevo caracter
+        // verificación de que exista todavía caracteres
         if (formated[0]) {
           pre = formated[0];
         } else {
+          // si no existe devolvemos el caracter vacio como
           pre = "";
           return;
         }
       } else {
+        // setError es una función de useState de React que sirve para mostrar el nombre del error.
         setError(`Error al hacer match.`);
         throw Error();
       }
     };
 
+    /**
+     * Función del no terminal dígito
+     */
     const digito = () => {
       switch (pre) {
         case "0":
