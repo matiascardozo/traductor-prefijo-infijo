@@ -153,9 +153,12 @@ function App() {
         salida += ")";
         return;
       } else if (pre in nums) {
+        digito();
         num();
         return;
-      } else return;
+      } else {
+        setError("Error. Faltan operadores u operandos")
+      };
     };
     expr();
     if (formated.length !== 0) {
